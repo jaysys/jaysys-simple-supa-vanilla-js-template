@@ -1,0 +1,1 @@
+# jaysys-simple-supa-vanilla-js-template
