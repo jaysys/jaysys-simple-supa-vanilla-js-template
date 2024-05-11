@@ -6,10 +6,23 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
       canvas {
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
+        display: block;
+        margin: auto;
+        margin-top: 20px;
       }
     </style>
   </head>
@@ -19,9 +32,8 @@
     <input type="button" value="Insert new data" id="create_btn" />
     <input type="button" value="Delete data" id="delete_btn" />
     <script>
-      const supabaseUrl = "https://roedkzcauemszhdofpsljho.supabase.co";
-      const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9jho.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvZWRremNhdWVtc3poZG9mcHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUwMTk0MTMsImV4cCI6MjAzMDU5NTQxM30.uhyKCTbd2xsa4LhjFcVWLMctFkURb1jX36eQeV1fVw4jho";
+      const supabaseUrl = "aa";
+      const supabaseKey = "aa";
       const client = supabase.createClient(supabaseUrl, supabaseKey);
       async function refreshHistory() {
         let { data: record, error } = await client
