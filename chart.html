@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      canvas {
+        display: block;
+        margin: auto;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tableContainer">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>X Value</th>
+            <th>Y Value</th>
+          </tr>
+        </thead>
+        <tbody id="dataBody"></tbody>
+      </table>
+    </div>
+
+    <canvas id="lineChart" width="600" height="400"></canvas>
+
+    <script>
+      // Function to generate sample data
+      function generateData() {
+        let x = [];
+        let y = [];
+        for (let i = 0; i <= 10; i++) {
+          x.push(i);
+          y.push(Math.sin(i));
+        }
+        return { x: x, y: y };
+      }
+
+      // Function to draw line chart
+      function drawLineChart(x, y) {
+        const ctx = document.getElementById("lineChart").getContext("2d");
+        const lineChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: x,
+            datasets: [
+              {
+                label: "Sample Data",
+                data: y,
+                borderColor: "blue",
+                backgroundColor: "rgba(0, 0, 255, 0.1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "X Values",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Y Values",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Function to display data in table
+      function displayDataInTable(x, y) {
+        let dataBody = document.getElementById("dataBody");
+        let tableContent = "";
+        for (let i = 0; i < x.length; i++) {
+          tableContent += `<tr><td>${x[i]}</td><td>${y[i]}</td></tr>`;
+        }
+        dataBody.innerHTML = tableContent;
+      }
+
+      // Generate sample data
+      let data = generateData();
+      let xValues = data.x;
+      let yValues = data.y;
+
+      // Display data in table
+      displayDataInTable(xValues, yValues);
+
+      // Draw line chart
+      drawLineChart(xValues, yValues);
+    </script>
+  </body>
+</html>
