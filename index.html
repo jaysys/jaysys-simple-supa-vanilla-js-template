@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Supabase</h2>
+    <div id="history"></div>
+    <input type="button" value="Insert new data" id="create_btn" />
+    <input type="button" value="Delete data" id="delete_btn" />
+    <script>
+      const supabaseUrl = "https://roedkzcauemszhdofpsljho.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9jho.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvZWRremNhdWVtc3poZG9mcHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUwMTk0MTMsImV4cCI6MjAzMDU5NTQxM30.uhyKCTbd2xsa4LhjFcVWLMctFkURb1jX36eQeV1fVw4jho";
+      const client = supabase.createClient(supabaseUrl, supabaseKey);
+      async function refreshHistory() {
+        let { data: record, error } = await client
+          .from("sample_data")
+          .select("*");
+
+        let x = [];
+        let y = [];
+
+        for (let i = 0; i < record.length; i++) {
+          x.push(record[i].x_val);
+          y.push(record[i].y_val);
+        }
+
+        console.log("x values", x);
+        console.log("y values", y);
+
+        let tag = "";
+        for (let i = 0; i < record.length; i++) {
+          tag += `<h4>${record[i].x_val} | ${record[i].y_val} | ${record[i].note} | ${record[i].sn}</h4>`;
+        }
+        document.querySelector("#history").innerHTML = tag;
+        drawHistory(x, y);
+      }
+      refreshHistory();
+
+      async function recordInsertHandler() {
+        const x_val = prompt("x_val?");
+        const y_val = prompt("y_val?");
+        const note = prompt("note?");
+        // Check if any input value is empty
+        if (!x_val || !y_val || !note) {
+          console.log("One or more values are empty. Skipping insert.");
+          return;
+        }
+        const { data: record, error } = await client
+          .from("sample_data")
+          .insert([
+            {
+              x_val,
+              y_val,
+              note,
+            },
+          ])
+          .select();
+
+        if (error) {
+          console.error("Error inserting record:", error.message);
+          return;
+        }
+        console.log("Inserted record:", record);
+        refreshHistory();
+      }
+      document
+        .querySelector("#create_btn")
+        .addEventListener("click", recordInsertHandler);
+
+      async function recordDeleteHandler() {
+        let x_val = prompt("x_val?");
+        let matchCondition = {};
+
+        if (x_val === null || x_val.trim() === "") {
+          matchCondition = { x_val: null };
+        } else {
+          matchCondition = { x_val };
+        }
+
+        const { data: record, error } = await client
+          .from("sample_data")
+          .delete()
+          .match(matchCondition)
+          .select();
+
+        if (error) {
+          console.error("Error deleting records:", error.message);
+          return;
+        }
+        console.log("Deleted records:", record);
+        refreshHistory();
+      }
+      document
+        .querySelector("#delete_btn")
+        .addEventListener("click", recordDeleteHandler);
+    </script>
+
+    <canvas id="lineChart" width="600" height="400"></canvas>
+    <script>
+      async function drawHistory(a, b) {
+        // Sample data
+        // const a = [1, 2, 3, 4, 5];
+        // const b = [10, 15, 7, 20, 12];
+        const x = a;
+        const y = b;
+        console.log("x- values", x);
+        console.log("y- values", y);
+
+        let existingChart = Chart.getChart("lineChart");
+        // If the chart exists, destroy it
+        if (existingChart) {
+          existingChart.destroy();
+        }
+
+        // Create chart
+        const ctx = document.getElementById("lineChart").getContext("2d");
+        const lineChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: x,
+            datasets: [
+              {
+                label: "Sample Data",
+                data: y,
+                borderColor: "blue",
+                backgroundColor: "rgba(0, 0, 255, 0.1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "X Values",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Y Values",
+                },
+              },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<!-- const { error } = await supabase
+  .from('countries')
+  .delete()
+  .in('id', [1, 2, 3]) -->
+
+<!-- const { data: record, error } = await client
+  .from("sample_data")
+  .delete()
+  .eq("x_val", prompt("x_val?"))
+  .select(); -->
