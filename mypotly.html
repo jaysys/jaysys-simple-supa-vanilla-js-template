@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plotly Line Chart</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <script>
+      // Generate random data
+      function generateRandomData(numPoints) {
+        var data = [];
+        var usedX = new Set(); // To keep track of used x values
+
+        for (var i = 0; i < numPoints; i++) {
+          var randomX, randomY;
+          do {
+            randomX = Math.random().toString(36).substring(7); // Random string as x value
+          } while (usedX.has(randomX)); // Ensure unique x value
+          usedX.add(randomX);
+
+          // Random number for y
+          var randomY = Math.floor(Math.random() * 150); // Change 150 to adjust the range of random numbers
+
+          data.push({ x: randomX, y: randomY });
+        }
+
+        // Sort data by x-values
+        data.sort((a, b) => (a.x > b.x ? 1 : -1));
+
+        return data;
+      }
+
+      // Generate random data
+      var data = generateRandomData(100);
+      var x_val = data.map((d) => d.x);
+      var y_val = data.map((d) => d.y);
+
+      // Create a trace
+      var trace = {
+        x: x_val,
+        y: y_val,
+        type: "scatter",
+        mode: "lines", // Change mode to "lines" to connect points
+        line: {
+          color: "gray",
+        },
+      };
+
+      // Create the data array
+      var data = [trace];
+
+      // Set the layout
+      var layout = {
+        title: "Line Chart",
+        xaxis: {
+          title: "X-axis",
+        },
+        yaxis: {
+          title: "Y-axis",
+        },
+        width: "100%", // Make the chart width 100% of its container
+        height: "100%", // Make the chart height 100% of its container
+      };
+
+      // Plot the chart
+      Plotly.newPlot("chart", data, layout);
+    </script>
+  </body>
+</html>
